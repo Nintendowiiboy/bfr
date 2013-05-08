@@ -2,7 +2,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.newtongamesinc.rmcrunfree"
-        version   = "1.0.0">
+        version   = "1.1.0">
     <name>RMCRun Free</name>
 
     <description>
@@ -13,7 +13,7 @@
         Newton Games Inc.
     </author>
 
-    <preference name="phonegap-version" value="2.2.0" />
+    <preference name="phonegap-version" value="2.5.0" />
     <preference name="orientation"      value="landscape" />
     <preference name="target-device"    value="universal" />
     <preference name="fullscreen"       value="true" />
@@ -21,6 +21,8 @@
     <icon src="images/icon.png" />
 
     <preference name="splash-screen-duration" value="2000" />
+
+    <preference name="DisallowOverscroll" value="true" />
     
     <preference name="permissions" value="none"/>
 
