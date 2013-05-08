@@ -183,6 +183,7 @@ function fall(){
 
 function death(){
 
+ screen = "death"
  text2 = "Game Over! Press Space to restart...";
  clickable = false;
  points = 0;
@@ -270,7 +271,7 @@ function mouseClick(e){
   if (((e.pageX - can.offsetLeft) > startButtonLeft ) && ((e.pageX - can.offsetLeft) < startButtonRight) && ((e.pageY - can.offsetTop) > startButtonTop) && ((e.pageY - can.offsetTop) < startButtonBottom)){
    clearInterval(mloop);
    bg.src = "images/bg1.jpg";
-   screen = "game";
+   screen = "pregame";
    clickable = false;
    pressable = true;
    mloop = setInterval("mainLoop()",1000/fps);
@@ -286,8 +287,30 @@ function mouseClick(e){
    jumpNoise.play();
   }
   jumpLoop = setInterval("jump()",1000/fps);
- }else{
-  msg.innerHTML = "Can't click!";
+ }else{msg.innerHTML = "Can't click!";}
+
+ if (screen == "pregame" && pressable == true && gameOver != true && clickable == false){
+  text2 = null;
+  pressable = false;
+  clickable = true;
+  go = true;
+  speedLoop = setInterval(testScore,20000);
+  compGen = setInterval(randomCompGenerator,3000);
+  screen = "game";
+ }
+ else if (gameOver == true && screen == "death"){
+  gameOver = false;
+  text2 = null;
+  clickable = true;
+  pressable = false;
+  go = true;
+  screen = "game";
+  speedLoop = setInterval(testScore,20000);
+  compGen = setInterval(randomCompGenerator,3000);
+ }else if (screen != "game"){
+  clearInterval(compLoop);
+  clearInterval(compGen);
+  clearInterval(speedLoop);
  }
 
 }
@@ -296,7 +319,7 @@ function keyPress(e){
 
  e = e || window.event;
 
- if ((e.keyCode == 32 || e.which == 32) && pressable == true && gameOver != true){
+ /*if ((e.keyCode == 32 || e.which == 32) && pressable == true && gameOver != true){
   text2 = null;
   pressable = false;
   clickable = true;
@@ -316,7 +339,7 @@ function keyPress(e){
   clearInterval(compLoop);
   clearInterval(compGen);
   clearInterval(speedLoop);
- }
+ }*/
 
 }
 
