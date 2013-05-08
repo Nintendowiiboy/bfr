@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.newtongamesinc.rmcrunfree"
+        version   = "1.0.0">
+    <name>RMCRun Free</name>
+
+    <description>
+        App made for fun.
+    </description>
+
+    <author href="http://nintendowiiboy.com" email="Boyrobber2@gmail.com">
+        Newton Games Inc.
+    </author>
+
+    <preference name="phonegap-version" value="2.2.0" />
+    <preference name="orientation"      value="landscape" />
+    <preference name="target-device"    value="universal" />
+    <preference name="fullscreen"       value="true" />
+
+    <icon src="images/icon.png" />
+
+    <preference name="splash-screen-duration" value="2000" />
+    
+    <preference name="permissions" value="none"/>
+
+    <gap:splash src="images/logo.png"  gap:platform="android" gap:density="ldpi" />
+    <gap:splash src="images/logo.png"         gap:platform="blackberry" />
+    <gap:splash src="images/logo.png"    gap:platform="ios"     width="320" height="480" />
+    <gap:splash src="images/logo.jpg" gap:platform="winphone" />
+</widget>
