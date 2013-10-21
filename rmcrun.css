@@ -6,3 +6,7 @@
 #resetButton, #msg, #testy, #msg2, #img1, #img2, #img3, #img4, #img5, #sound1{
  display:none;
 }
+
+body{
+ margin:0px;
+}
