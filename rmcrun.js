@@ -185,7 +185,7 @@ function death(){
 
  screen = "death"
  text2 = "Game Over! Press Space to restart...";
- clickable = false;
+ //clickable = false;
  points = 0;
  compX = 600;
  clearInterval(compGen);
