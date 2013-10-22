@@ -1,47 +1,7 @@
-var mloop;
-var fps;
-var can;
-var con;
-var canWidth;
-var canHeight;
-var bg;
-var rnd1;
-var rnd2;
-var comp;
-var compAlive;
-var compY;
-var compX;
-var compWidth;
-var compHeight;
-var compNum;
-var player;
-var playerHeight;
-var playerWidth;
-var playerX;
-var playerY;
-var death;
-var splashNum;
-var jumpLoop;
-var fallLoop;
-var clickable;
-var screen;
-var pressable;
-var gameOver;
-var points;
-var highscore;
-var compSpeed;
-var compGen;
-var go;
-var msg2;
-var speedLoop;
-var text1;
-var text2;
-var jumpNoise;
-var gameOverNoise;
-var startButtonTopLeft;
-var startButtonTopRight;
-var startButtonBottomLeft;
-var startButtonBottomRight;
+var mloop, fps, can, con, canWidth, canHeight, bg, rnd1, rnd2, comp, compAlive, compY, compX, compWidth, compHeight;
+var compNum, player, playerHeight, playerWidth, playerX, playerY, death, splashNum, jumpLoop, fallLoop;
+var clickable, screen, pressable, gameOver, points, highscore, compSpeed, compGen, go, msg2, speedLoop;
+var text1, text2, jumpNoise, gameOverNoise, startButtonTopLeft, startButtonTopRight, startButtonBottomLeft, startButtonBottomRight;
 window.onload = start;
 
 function start(){
@@ -184,7 +144,7 @@ function fall(){
 function death(){
 
  screen = "death"
- text2 = "Game Over! Press Space to restart...";
+ checkHighScore();
  clickable = false;
  points = 0;
  compX = 600;
@@ -382,5 +342,19 @@ function scaleImages(){
  }else{
   startButtonTop = 140;
   startButtonBottom = 243;
+ }
+}
+
+function checkHighScore(){
+ if (localStorage.hs == null || localStorage.hs == "undefined"){
+  localStorage.hs = Math.floor(points/3);
+  text2 = "Congrats on the new highscore of " + Math.floor(points/3) + "!";
+ }
+ else if (Math.floor(points/3) > localStorage.hs){
+  localStorage.hs = Math.floor(points/3);
+  text2 = "Congrats on the new highscore of " + Math.floor(points/3) + "!";
+ }
+ else{
+  text2 = "Game Over! Press Space to restart...";
  }
 }
