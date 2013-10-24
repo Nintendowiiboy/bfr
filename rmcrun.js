@@ -2,6 +2,7 @@ var mloop, fps, can, con, canWidth, canHeight, bg, rnd1, rnd2, comp, compAlive, 
 var compNum, player, playerHeight, playerWidth, playerX, playerY, death, splashNum, jumpLoop, fallLoop;
 var clickable, screen, pressable, gameOver, points, highscore, compSpeed, compGen, go, msg2, speedLoop;
 var text1, text2, jumpNoise, gameOverNoise, startButtonTopLeft, startButtonTopRight, startButtonBottomLeft, startButtonBottomRight;
+var fb, fbButtonLeft, fbButtonRight, fbButtonBottom, fbButtonTop;
 window.onload = start;
 
 function start(){
@@ -37,9 +38,15 @@ function start(){
  startButtonRight = 455;
  startButtonTop = 140;
  startButtonBottom = 243;
+ fbButtonLeft = 150;
+ fbButtonRight = 430;
+ fbButtonTop = 268;
+ fbButtonBottom = 360;
  scaleImages();
  mloop = setInterval("splash()",3000);
-
+ fb = new Image();
+ fb.src = "images/bg2.jpg";
+ 
  //event listeners
  can.addEventListener('click', mouseClick);
  document.addEventListener('keydown', keyPress);
@@ -208,7 +215,7 @@ function testForImpact(){
  }
  else if (gameOver != true && go == true){
   points++;
-  text1 = "Points: " + Math.floor(points/3);
+  text1 = "Highscore: " + localStorage.hs + " ~ Points: " + Math.floor(points/3);
  }
  else{}
 }
@@ -259,14 +266,19 @@ function mouseClick(e){
   screen = "game";
  }
  else if (gameOver == true && screen == "death"){
-  gameOver = false;
-  text2 = null;
-  clickable = true;
-  pressable = false;
-  go = true;
-  screen = "game";
-  speedLoop = setInterval(testScore,20000);
-  compGen = setInterval(randomCompGenerator,3000);
+  if (((e.pageX - can.offsetLeft) > fbButtonLeft ) && ((e.pageX - can.offsetLeft) < fbButtonRight) && ((e.pageY - can.offsetTop) > fbButtonTop) && ((e.pageY - can.offsetTop) < fbButtonBottom)){
+    window.open("http://www.facebook.com/sharer.php?s=100&p[title]=High+Score!&p[summary]=I+just+made+a+highscore+of+" + localStorage.hs + "!+Download+your+copy+of+RMCRun+by+clicking+the+link!&p[url]=http://www.google.com/&p[images][0]=http://img845.imageshack.us/img845/1219/y8co.png", "_blank");
+  }else{
+   gameOver = false;
+   text2 = null;
+   clickable = true;
+   pressable = false;
+   go = true;
+   screen = "game";
+   bg.src = "images/bg1.jpg";
+   speedLoop = setInterval(testScore,20000);
+   compGen = setInterval(randomCompGenerator,3000);
+  }
  }else if (screen != "game"){
   clearInterval(compLoop);
   clearInterval(compGen);
@@ -313,7 +325,7 @@ function testScore(){
 
 function mouseMoved(e){
 	
-testy.innerHTML = "pageX: " + startButtonLeft + " " + startButtonRight + " pageY: " + startButtonTop + " " + startButtonBottom;
+ testy.innerHTML = "pageX: " + (e.pageX - can.offsetLeft) + " " + fbButtonLeft + " " + startButtonLeft + " pageY: " + (e.pageY - can.offsetTop) + " " + fbButtonTop + " " + startButtonTop;
 
 }
 
@@ -325,23 +337,35 @@ function scaleImages(){
  if (nw < 600){
   startButtonLeft = (startButtonLeft / 600) * nw;
   startButtonRight = (startButtonRight / 600) * nw;
+  fbButtonLeft = (fbButtonLeft / 600) * nw;
+  fbButtonRight = (fbButtonRight / 600) * nw;
  }else if (nw > 600){
   startButtonLeft = (startButtonLeft * nw) / 600;
   startButtonRight = (startButtonRight * nw) / 600;
+  fbButtonLeft = (fbButtonLeft * nw) / 600;
+  fbButtonRight = (fbButtonRight * nw) / 600;
  }else{
   startButtonLeft = 124;
   startButtonRight = 455;
+  fbButtonLeft = 150;
+  fbButtonRight = 430;
  }
  
  if (nh < 500){
   startButtonTop = (startButtonTop / 500) * nh;
   startButtonBottom = (startButtonBottom / 500) * nh;
+  fbButtonTop = (fbButtonTop / 500) * nh;
+  fbButtonBottom = (fbButtonBottom / 500) * nh;
  }else if (nh > 500){
   startButtonTop = (startButtonTop * nh) / 500;
   startButtonBottom = (startButtonBottom * nh) / 500;
+  fbButtonTop = (fbButtonTop * nh) / 500;
+  fbButtonBottom = (fbButtonBottom * nh) / 500;
  }else{
   startButtonTop = 140;
   startButtonBottom = 243;
+  fbButtonTop = 268;
+  fbButtonBottom = 360;
  }
 }
 
@@ -349,10 +373,12 @@ function checkHighScore(){
  if (localStorage.hs == null || localStorage.hs == "undefined"){
   localStorage.hs = Math.floor(points/3);
   text2 = "Congrats on the new highscore of " + Math.floor(points/3) + "!";
+  bg.src = "images/bg2.jpg";
  }
  else if (Math.floor(points/3) > localStorage.hs){
   localStorage.hs = Math.floor(points/3);
   text2 = "Congrats on the new highscore of " + Math.floor(points/3) + "!";
+  bg.src = "images/bg2.jpg";
  }
  else{
   text2 = "Game Over! Press Space to restart...";
