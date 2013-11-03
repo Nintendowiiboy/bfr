@@ -170,7 +170,7 @@ function randomCompGenerator(){
 
  compX = canWidth;
  compAlive = true;
- rnd = Math.floor((Math.random()*5)+1);
+ rnd = Math.floor((Math.random()*6)+1);
  if (rnd == 2){
   compHeight = 54;
   compWidth = 74;
@@ -206,6 +206,13 @@ function randomCompGenerator(){
   comp.src = "images/racecar.png";
   player.src = "images/rmc1.png";
   bump = true;
+ }else if (rnd == 6){
+  compHeight = 54;
+  compWidth = 74;
+  compY = 433;
+  comp.src = "images/bulletBob.png";
+  player.src = "images/rmc1.png";
+  bump = false;
  }
  compLoop = setInterval("compMove()",1000/fps);
 
@@ -225,6 +232,8 @@ function compMove(){
  }else if (bump == true){
   compY -= 3;
  }
+
+ 
 }
 
 function testForImpact(){
@@ -272,7 +281,7 @@ function mouseClick(e){
    jumpNoise.src = "audio/wii.wav";
    jumpNoise.play();
   }
-  jumpLoop = setInterval("jump()",1000/fps);
+   jumpLoop = setInterval("jump()",1000/fps);
  }else{msg.innerHTML = "Can't click!";}
 
  if (screen == "pregame" && pressable == true && gameOver != true && clickable == false){
