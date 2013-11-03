@@ -1,8 +1,8 @@
 var mloop, fps, can, con, canWidth, canHeight, bg, rnd1, rnd2, comp, compAlive, compY, compX, compWidth, compHeight;
-var compNum, player, playerHeight, playerWidth, playerX, playerY, death, splashNum, jumpLoop, fallLoop;
+var compNum, player, playerHeight, playerWidth, playerX, playerY, death, splashNum, jumpLoop, fallLoop, hs;
 var clickable, screen, pressable, gameOver, points, highscore, compSpeed, compGen, go, msg2, speedLoop;
 var text1, text2, jumpNoise, gameOverNoise, startButtonTopLeft, startButtonTopRight, startButtonBottomLeft, startButtonBottomRight;
-var fb, fbButtonLeft, fbButtonRight, fbButtonBottom, fbButtonTop;
+var fb, fbButtonLeft, fbButtonRight, fbButtonBottom, fbButtonTop, bump;
 window.onload = start;
 
 function start(){
@@ -14,6 +14,7 @@ function start(){
  fps = 40;
  can = document.getElementById("can");
  con = can.getContext("2d");
+ hs = false;
  canWidth = 600;
  canHeight = 500;
  points = 0;
@@ -46,6 +47,7 @@ function start(){
  mloop = setInterval("splash()",3000);
  fb = new Image();
  fb.src = "images/bg2.jpg";
+ bump = false;
  
  //event listeners
  can.addEventListener('click', mouseClick);
@@ -106,7 +108,7 @@ function draw(){
   con.fillText(text1,5,20);
  }
  
- if (text2 != null && text2 == "Press Space to start..."){
+ if (text2 != null && text2 == "Click screen to start..."){
   con.fillText(text2,200,200);
  }else if (text2 != null){
   con.fillText(text2,100,200);
@@ -168,31 +170,42 @@ function randomCompGenerator(){
 
  compX = canWidth;
  compAlive = true;
- rnd = Math.floor((Math.random()*4)+1);
+ rnd = Math.floor((Math.random()*5)+1);
  if (rnd == 2){
   compHeight = 54;
   compWidth = 74;
   compY = 433;
   comp.src = "images/gn.png";
   player.src = "images/rmc1.png";
+  bump = false;
  }else if (rnd == 1){
   compHeight = 27;
   compWidth = 37;
   compY = 460;
   comp.src = "images/gn.png";
   player.src = "images/rmc1.png";
+  bump = false;
  }else if (rnd == 3){
   compHeight = 54;
   compWidth = 74;
   compY = 433;
-  comp.src = "images/wiius.png";
+  comp.src = "images/bricks.png";
   player.src = "images/rmc1.png";
+  bump = false;
  }else if (rnd == 4){
   compHeight = 54;
   compWidth = 74;
   compY = 433;
   comp.src = "images/snake.png";
   player.src = "images/rmc3.png";
+  bump = false;
+ }else if (rnd == 5){
+  compHeight = 54;
+  compWidth = 74;
+  compY = 433;
+  comp.src = "images/racecar.png";
+  player.src = "images/rmc1.png";
+  bump = true;
  }
  compLoop = setInterval("compMove()",1000/fps);
 
@@ -205,6 +218,12 @@ function compMove(){
  }else{
   pressable = true;
   clearInterval(compLoop);
+ }
+ 
+ if (bump == true && compY < 433){
+  compY += 3;
+ }else if (bump == true){
+  compY -= 3;
  }
 }
 
@@ -242,7 +261,7 @@ function mouseClick(e){
    clickable = false;
    pressable = true;
    mloop = setInterval("mainLoop()",1000/fps);
-   text2 = "Press Space to start...";
+   text2 = "Click screen to start...";
   }
  }
  else if (clickable == true && screen == "game"){
@@ -266,7 +285,7 @@ function mouseClick(e){
   screen = "game";
  }
  else if (gameOver == true && screen == "death"){
-  if (((e.pageX - can.offsetLeft) > fbButtonLeft ) && ((e.pageX - can.offsetLeft) < fbButtonRight) && ((e.pageY - can.offsetTop) > fbButtonTop) && ((e.pageY - can.offsetTop) < fbButtonBottom)){
+  if (((e.pageX - can.offsetLeft) > fbButtonLeft ) && ((e.pageX - can.offsetLeft) < fbButtonRight) && ((e.pageY - can.offsetTop) > fbButtonTop) && ((e.pageY - can.offsetTop) < fbButtonBottom) && (hs == true)){
     window.open("http://www.facebook.com/sharer.php?s=100&p[title]=High+Score!&p[summary]=I+just+made+a+highscore+of+" + localStorage.hs + "!+Download+your+copy+of+RMCRun+by+clicking+the+link!&p[url]=http://www.google.com/&p[images][0]=http://img845.imageshack.us/img845/1219/y8co.png", "_blank");
   }else{
    gameOver = false;
@@ -373,14 +392,17 @@ function checkHighScore(){
  if (localStorage.hs == null || localStorage.hs == "undefined"){
   localStorage.hs = Math.floor(points/3);
   text2 = "Congrats on the new highscore of " + Math.floor(points/3) + "!";
+  hs = true;
   bg.src = "images/bg2.jpg";
  }
  else if (Math.floor(points/3) > localStorage.hs){
   localStorage.hs = Math.floor(points/3);
   text2 = "Congrats on the new highscore of " + Math.floor(points/3) + "!";
+  hs = true;
   bg.src = "images/bg2.jpg";
  }
  else{
-  text2 = "Game Over! Press Space to restart...";
+  text2 = "Game Over! Click screen to restart...";
+  hs = false;
  }
 }
