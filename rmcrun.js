@@ -1,6 +1,6 @@
 var mloop, fps, can, con, canWidth, canHeight, bg, rnd1, rnd2, comp, compAlive, compY, compX, compWidth, compHeight;
-var compNum, player, playerHeight, playerWidth, playerX, playerY, death, splashNum, jumpLoop, fallLoop, hs;
-var clickable, screen, pressable, gameOver, points, highscore, compSpeed, compGen, go, msg2, speedLoop;
+var compNum, player, playerHeight, playerWidth, playerX, playerY, death, splashNum, jumpLoop, fallLoop, hs, rnd;
+var clickable, screen, pressable, gameOver, points, highscore, compSpeed, compGen, go, msg2, speedLoop, compLoop, cloudLoop;
 var text1, text2, jumpNoise, gameOverNoise, startButtonTopLeft, startButtonTopRight, startButtonBottomLeft, startButtonBottomRight;
 var fb, fbButtonLeft, fbButtonRight, fbButtonBottom, fbButtonTop, bump, rnd3, cloud, cloudX, cloudY, cloudWidth, cloudHeight, cloudAlive, sound;
 var soundBar, soundImageX, soundImageY, menuLeft, menuRight, menuTop, menuBottom, soundTop, soundBottom, soundLeft, soundRight, localSound;
@@ -12,7 +12,7 @@ function start(){
  msg2 = document.getElementById("msg2");
  player = new Image();
  player.src = "images/rmc1.png";
- fps = 40;
+ fps = 50;
  can = document.getElementById("can");
  con = can.getContext("2d");
  hs = false;
@@ -51,7 +51,6 @@ function start(){
  cloud = new Image();
  cloudWidth = 200;
  cloudHeight = 200;
- sound = true;
  soundBar = new Image();
  soundBar.src = "images/soundOn.png";
  soundImageX = 0;
@@ -107,7 +106,7 @@ function mainLoop(){
 
  draw();
  testForImpact();
- //testScore();
+ //speedIncrease();
  
 }
 
@@ -187,7 +186,7 @@ function death(){
  compSpeed = 10;
  go = false;
  gameOver = true;
- if (sound == true){
+ if (sound == "true"){
   gameOverNoise.play();
  }
 
@@ -326,7 +325,6 @@ function resetAll(){
 
  compX = 600;
  compY = 460;
- compSpeed = 10;
  cloudX = 600;
  text1 = null;
  text2 = null;
@@ -337,13 +335,19 @@ function resetAll(){
  bg.src = "images/menu_beta.jpg";
  clickable = true;
  pressable = false;
- clearInterval(compLoop);
- clearInterval(compGen);
- clearInterval(speedLoop);
- clearInterval(cloudLoop);
  clearInterval(mloop);
+ clearInterval(compGen);
+ clearInterval(cloudGen);
+ clearInterval(speedLoop);
+ compSpeed = 10;
  con.clearRect(0,0,canWidth,canHeight);
  con.drawImage(bg,0,0,canWidth,canHeight);
+ if (compLoop != null && compLoop != ""){
+  clearInterval(compLoop);
+ }
+ if (cloudLoop != null && cloudLoop != ""){
+  clearInterval(cloudLoop);
+ }
  
 }
 
@@ -352,7 +356,6 @@ function mouseClick(e){
  e = e || window.event;
 
  if (clickable == true && screen == "menu"){
- 
   if (((e.pageX - can.offsetLeft) > startButtonLeft ) && ((e.pageX - can.offsetLeft) < startButtonRight) && ((e.pageY - can.offsetTop) > startButtonTop) && ((e.pageY - can.offsetTop) < startButtonBottom)){
    clearInterval(mloop);
    bg.src = "images/bg1.jpg";
@@ -364,48 +367,34 @@ function mouseClick(e){
   }
  }
  if (screen == "game" || screen == "death"){
-  if (((e.pageX - can.offsetLeft) > soundLeft ) && ((e.pageX - can.offsetLeft) < soundRight) && ((e.pageY - can.offsetTop) > soundTop) && ((e.pageY - can.offsetTop) < soundBottom)){
-   if (sound == true){
-    sound = false;
-    soundBar.src = "images/soundOff.png";
-	localStorage.sound = false;
-   }else{
-    sound = true;
-    soundBar.src = "images/soundOn.png";
-	localStorage.sound = true;
-   }
-  }
-  if (((e.pageX - can.offsetLeft) > menuLeft ) && ((e.pageX - can.offsetLeft) < menuRight) && ((e.pageY - can.offsetTop) > menuTop) && ((e.pageY - can.offsetTop) < menuBottom)){
-   gameOver = false;
-   resetAll();
-  }
+
  }
  if (clickable == true && screen == "game"){
-  if (rnd == 4){
-   if (sound == true){
-    jumpNoise.src = "audio/scream.wav";
-    jumpNoise.play();
-   }
-  }else{
-   if (sound == true){
-    jumpNoise.src = "audio/wii.wav";
-    jumpNoise.play();
-   }
-  }
   if (((e.pageY - can.offsetTop) > soundBottom)){
+   if (rnd == 4){
+    if (sound == "true"){
+     jumpNoise.src = "audio/scream.wav";
+     jumpNoise.play();
+    }
+   }else{
+    if (sound == "true"){
+     jumpNoise.src = "audio/wii.wav";
+     jumpNoise.play();
+    }
+   }
    jumpLoop = setInterval("jump()",1000/fps);
   }
  }else{msg.innerHTML = "Can't click!";}
 
  if (screen == "pregame" && pressable == true && gameOver != true && clickable == false){
   if (((e.pageY - can.offsetTop) > soundBottom)){
+   speedLoop = setInterval(speedIncrease,20000);
+   compGen = setInterval(randomCompGenerator,3000);
+   cloudGen = setInterval(randomCloudGenerator,2000);
    text2 = null;
    pressable = false;
    clickable = true;
    go = true;
-   speedLoop = setInterval(testScore,20000);
-   compGen = setInterval(randomCompGenerator,3000);
-   cloudGen = setInterval(randomCloudGenerator,2000);
    screen = "game";
   }
  }
@@ -417,19 +406,40 @@ function mouseClick(e){
    text2 = null;
    clickable = true;
    pressable = false;
+   speed = 10;
    go = true;
    screen = "game";
    bg.src = "images/bg1.jpg";
-   speedLoop = setInterval(testScore,20000);
+   speedLoop = setInterval(speedIncrease,20000);
    compGen = setInterval(randomCompGenerator,3000);
    cloudGen = setInterval(randomCloudGenerator,2000);
   }
- }else if (screen != "game"){
+ }else if (screen != "game" && screen != "pregame" && screen != "menu"){
   clearInterval(compLoop);
+  clearInterval(cloudLoop);
   clearInterval(compGen);
+  clearInterval(cloudGen);
   clearInterval(speedLoop);
  }
-
+ 
+ if (screen != "menu" && screen != "splash" && screen != "splash1" && screen != "splash2" && screen != "splashScreen"){
+  if (((e.pageX - can.offsetLeft) > soundLeft ) && ((e.pageX - can.offsetLeft) < soundRight) && ((e.pageY - can.offsetTop) > soundTop) && ((e.pageY - can.offsetTop) < soundBottom)){
+   if (sound == "true"){
+    sound = "false";
+    soundBar.src = "images/soundOff.png";
+	localStorage.sound = "false";
+   }else{
+    sound = "true";
+    soundBar.src = "images/soundOn.png";
+	localStorage.sound = "true";
+   }
+  }
+  if (((e.pageX - can.offsetLeft) > menuLeft ) && ((e.pageX - can.offsetLeft) < menuRight) && ((e.pageY - can.offsetTop) > menuTop) && ((e.pageY - can.offsetTop) < menuBottom)){
+   gameOver = false;
+   resetAll();
+  }
+ }
+  
 }
 
 function keyPress(e){
@@ -441,7 +451,7 @@ function keyPress(e){
   pressable = false;
   clickable = true;
   go = true;
-  speedLoop = setInterval(testScore,20000);
+  speedLoop = setInterval(speedIncrease,20000);
   compGen = setInterval(randomCompGenerator,3000);
  }
  else if ((e.keyCode == 32 || e.which == 32) && gameOver == true){
@@ -450,7 +460,7 @@ function keyPress(e){
   clickable = true;
   pressable = false;
   go = true;
-  speedLoop = setInterval(testScore,20000);
+  speedLoop = setInterval(speedIncrease,20000);
   compGen = setInterval(randomCompGenerator,3000);
  }else{
   clearInterval(compLoop);
@@ -460,7 +470,7 @@ function keyPress(e){
 
 }
 
-function testScore(){
+function speedIncrease(){
 
  if (compSpeed < 21){
   compSpeed += 1;
@@ -551,13 +561,13 @@ function checkHighScore(){
 function checkSound(){
 
  localSound = localStorage.sound;
- if (localSound != null && localSound != ""){
-  sound = localSound;
- }
- if (localStorage.sound == false){
+ if (localSound == "false"){
   soundBar.src = "images/soundOff.png";
+ }else{
+  sound = "true";
+  soundBar.src = "images/soundOn.png";
  }
-
+ 
 }
 
 function powerUpLarge(){
